@@ -23,7 +23,7 @@ print("CARREGADO")
 #                     "value": item["value"]
 #                 }
 #             })
-documents = data
+documents = data    
 print("EXTRAIDO E SEGMENTADO")
 
 # Gerar embeddings

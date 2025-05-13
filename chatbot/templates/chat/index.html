@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Chat Regulamento UFRN</title>
+  <style>
+    :root {
+      --primary: #007bff;
+      --primary-light: #e7f1ff;
+      --bg: #f5f7fa;
+      --text-dark: #333;
+      --text-light: #fff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    #chat {
+      width: 100%;
+      max-width: 600px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      margin-top: 0;
+      color: var(--primary);
+      text-align: center;
+    }
+
+    #chat {
+      height: auto;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .message {
+      margin: 0.5rem 0;
+      padding: 0.75rem;
+      border-radius: 10px;
+      max-width: 80%;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+
+    .user {
+      background: var(--primary-light);
+      color: var(--primary);
+      margin-left: auto;
+      text-align: right;
+    }
+
+    .bot {
+      background: #eee;
+      color: var(--text-dark);
+      margin-right: auto;
+      text-align: left;
+    }
+
+    #loading {
+      display: none;
+      font-style: italic;
+      color: gray;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 0.75rem 1.2rem;
+      background: var(--primary);
+      color: var(--text-light);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    @media (max-width: 600px) {
+      #chat {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="chat">
+    <h2>Chat do Regulamento da UFRN</h2>
+    <div id="messages"></div>
+    <div id="loading">Pensando...</div>
+    <div class="input-group">
+      <input type="text" id="query" placeholder="Digite sua pergunta..." />
+      <button onclick="send()">Enviar</button>
+    </div>
+  </div>
+
+  <script>
+    function send() {
+      const input = document.getElementById("query");
+      const query = input.value.trim();
+      if (!query) return;
+
+      const msgBox = document.getElementById("messages");
+      msgBox.innerHTML += `<div class="message user"><b>Você:</b> ${query}</div>`;
+      input.value = "";
+      document.getElementById("loading").style.display = "block";
+
+      fetch(`/ask/?query=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("loading").style.display = "none";
+          msgBox.innerHTML += `<div class="message bot"><b>Chat:</b> ${data.response}</div>`;
+          msgBox.scrollTop = msgBox.scrollHeight;
+        });
+    }
+
+    document.getElementById("query").addEventListener("keypress", function (e) {
+      if (e.key === "Enter") send();
+    });
+  </script>
+</body>
+
+</html>
